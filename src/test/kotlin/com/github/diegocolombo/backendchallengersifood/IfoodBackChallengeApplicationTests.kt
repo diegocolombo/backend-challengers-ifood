@@ -1,4 +1,4 @@
-package com.github.diegocolombo.ifoodbackchallenge
+package com.github.diegocolombo.backendchallengersifood
 
 import org.junit.Test
 import org.junit.runner.RunWith

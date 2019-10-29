@@ -1,11 +1,11 @@
-package com.github.diegocolombo.ifoodbackchallenge
+package com.github.diegocolombo.backendchallengersifood
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class IfoodBackChallengeApplication
+class BackendChallengersIfood
 
 fun main(args: Array<String>) {
-	runApplication<IfoodBackChallengeApplication>(*args)
+	runApplication<BackendChallengersIfood>(*args)
 }
