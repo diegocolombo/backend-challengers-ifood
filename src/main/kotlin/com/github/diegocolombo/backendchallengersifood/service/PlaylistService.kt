@@ -5,16 +5,17 @@ import com.github.diegocolombo.backendchallengersifood.gateway.SpotifyGateway
 import org.springframework.stereotype.Service
 
 @Service
-class PlaylistService {
+class PlaylistService(val openWeatherGateway: OpenWeatherGateway,
+                      val spotifyGateway: SpotifyGateway) {
 
     fun getPlaylistByCity(city: String): List<String> {
-        return getGenre(OpenWeatherGateway.getTemperatureByCity(city))
-                .let { SpotifyGateway.getPlaylistByGenre(it) }
+        return getGenre(openWeatherGateway.getTemperatureByCity(city))
+                .let { spotifyGateway.getPlaylistByGenre(it) }
     }
 
     fun getPlaylistByCoordinates(lat: Double, lon: Double): List<String> {
-        return getGenre(OpenWeatherGateway.getTemperatureByCoordinate(lat, lon))
-                .let { SpotifyGateway.getPlaylistByGenre(it) }
+        return getGenre(openWeatherGateway.getTemperatureByCoordinate(lat, lon))
+                .let { spotifyGateway.getPlaylistByGenre(it) }
     }
 
     private fun getGenre(temperature: Double): String {

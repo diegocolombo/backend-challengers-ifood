@@ -1,6 +1,7 @@
 package com.github.diegocolombo.backendchallengersifood.gateway
 
 import com.github.diegocolombo.backendchallengersifood.auth.BearerAuth
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
 import khttp.get
 import khttp.post
 import org.json.JSONObject
@@ -9,12 +10,9 @@ import org.springframework.stereotype.Component
 import kotlin.random.Random
 
 @Component
-object SpotifyGateway {
+class SpotifyGateway {
 
-    private const val URL: String = "https://api.spotify.com/v1/browse/categories"
-    private const val CLIENT_ID: String = "ac6240ec42734f31b3c9940964ce6578"
-    private const val CLIENT_SECRET: String = "4aea202fd2e94039bafb7d0695f4310d"
-
+    @HystrixCommand(fallbackMethod = "fallback")
     fun getPlaylistByGenre(genre: String): List<String> {
         val auth = BearerAuth(login())
 
@@ -45,6 +43,14 @@ object SpotifyGateway {
                 ))
                 .jsonObject
                 .getString("access_token")
+    }
+
+    fun fallback(str: String): List<String> = listOf("I Believe in a Thing Called Love")
+
+    companion object {
+        private const val URL: String = "https://api.spotify.com/v1/browse/categories"
+        private const val CLIENT_ID: String = "ac6240ec42734f31b3c9940964ce6578"
+        private const val CLIENT_SECRET: String = "4aea202fd2e94039bafb7d0695f4310d"
     }
 
 }
