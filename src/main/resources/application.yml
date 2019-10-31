@@ -1,2 +1,20 @@
 server:
   port: 8080
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+
+app:
+  openweather:
+    url: http://api.openweathermap.org/data/2.5/weather
+    appId:
+  spotify:
+    url: https://api.spotify.com/v1
+    authUrl: https://accounts.spotify.com/api/token
+    clientId:
+    secretKey:

@@ -1,0 +1,6 @@
+app:
+  openweather:
+    appId: b77e07f479efe92156376a8b07640ced
+  spotify:
+    clientId: ac6240ec42734f31b3c9940964ce6578
+    secretKey: 4aea202fd2e94039bafb7d0695f4310d

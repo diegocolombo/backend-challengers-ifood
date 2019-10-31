@@ -1,35 +1,39 @@
 package com.github.diegocolombo.backendchallengersifood.gateway
 
+import com.github.diegocolombo.backendchallengersifood.config.OpenWeatherConfiguration
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
 import khttp.get
 import khttp.responses.Response
 import org.springframework.stereotype.Component
+import kotlin.random.Random
 
 @Component
-class OpenWeatherGateway {
+class OpenWeatherGateway(val config: OpenWeatherConfiguration) {
 
-    @HystrixCommand(fallbackMethod = "reliable")
+    @HystrixCommand(fallbackMethod = "fallback")
     fun getTemperatureByCity(city: String): Double {
-        return extractTemperature(get(URL, params = mapOf(
+        return extractTemperature(get(config.url, params = mapOf(
                 "q" to city,
-                "appid" to Companion.APP_ID,
+                "appid" to config.appId,
                 "units" to "metric"
         )))
     }
 
-    @HystrixCommand(fallbackMethod = "reliable")
+    @HystrixCommand(fallbackMethod = "fallback")
     fun getTemperatureByCoordinate(lat: Double, lon: Double): Double {
-        return extractTemperature(get(URL, params = mapOf(
+        return extractTemperature(get(config.url, params = mapOf(
                 "lat" to lat.toString(),
                 "lon" to lon.toString(),
-                "appid" to Companion.APP_ID,
+                "appid" to config.appId,
                 "units" to "metric"
         )))
     }
 
-    fun reliable(str: String): Double = 20.0
+    fun fallback(str: String): Double = randomTemp()
 
-    fun reliable(lat: Double, lon: Double): Double = 20.0
+    fun fallback(lat: Double, lon: Double): Double = randomTemp()
+
+    private fun randomTemp(): Double = Random.nextDouble(-20.0, 40.0)
 
     private fun extractTemperature(response: Response): Double {
         return response
@@ -37,11 +41,6 @@ class OpenWeatherGateway {
                 .getJSONObject("main")
                 .getBigDecimal("temp")
                 .toDouble()
-    }
-
-    companion object {
-        private const val URL: String = "http://api.openweathermap.org/data/2.5/weather"
-        private const val APP_ID: String = "b77e07f479efe92156376a8b07640ced"
     }
 
 }

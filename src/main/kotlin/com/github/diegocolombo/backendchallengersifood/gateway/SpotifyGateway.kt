@@ -1,6 +1,7 @@
 package com.github.diegocolombo.backendchallengersifood.gateway
 
 import com.github.diegocolombo.backendchallengersifood.auth.BearerAuth
+import com.github.diegocolombo.backendchallengersifood.config.SpotifyConfiguration
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
 import khttp.get
 import khttp.post
@@ -10,13 +11,13 @@ import org.springframework.stereotype.Component
 import kotlin.random.Random
 
 @Component
-class SpotifyGateway {
+class SpotifyGateway(val config: SpotifyConfiguration) {
 
     @HystrixCommand(fallbackMethod = "fallback")
     fun getPlaylistByGenre(genre: String): List<String> {
         val auth = BearerAuth(login())
 
-        val playlistUri = get("$URL/$genre/playlists", auth = auth)
+        val playlistUri = get("${config.url}/browse/categories/$genre/playlists", auth = auth)
                 .jsonObject
                 .getJSONObject("playlists")
                 .getJSONArray("items")
@@ -34,11 +35,11 @@ class SpotifyGateway {
 
     private fun login(): String {
         return post(
-                url = "https://accounts.spotify.com/api/token",
+                url = config.authUrl,
                 headers = mapOf("Content-Type" to MediaType.APPLICATION_FORM_URLENCODED_VALUE),
                 data = mapOf(
-                        "client_id" to CLIENT_ID,
-                        "client_secret" to CLIENT_SECRET,
+                        "client_id" to config.clientId,
+                        "client_secret" to config.secretKey,
                         "grant_type" to "client_credentials"
                 ))
                 .jsonObject
@@ -46,11 +47,5 @@ class SpotifyGateway {
     }
 
     fun fallback(str: String): List<String> = listOf("I Believe in a Thing Called Love")
-
-    companion object {
-        private const val URL: String = "https://api.spotify.com/v1/browse/categories"
-        private const val CLIENT_ID: String = "ac6240ec42734f31b3c9940964ce6578"
-        private const val CLIENT_SECRET: String = "4aea202fd2e94039bafb7d0695f4310d"
-    }
 
 }
